@@ -1,0 +1,24 @@
+{
+  "bridge": {
+    "name": "Maggie",
+    "username": "CC:22:3D:F3:CE:35",
+    "port": 51826,
+    "pin": "031-45-154",
+    "ssdp": 1900
+  },
+
+  "description": "HomeBridge HTTP Status Control",
+
+  "platforms": [
+  ],
+
+  "accessories": [
+  {
+     "accessory": "HamptonBay",
+      "name": "Hampton",
+      "url": "http://192.168.1.175/json?simple=1",
+      "remote_code": "1111",
+      "dimmable": true,
+      "out": 2
+  }]
+}
