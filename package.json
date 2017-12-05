@@ -1,6 +1,6 @@
 {
-  "name": "homebridge-rf-fan-remote",
-  "version": "0.1.17",
+  "name": "homebridge-hampton-bay",
+  "version": "0.0.1",
   "description": "Homebridge Plugin for the FAN61T-4SP 315Mhz Fan Remote",
   "license": "ISC",
   "keywords": [
@@ -9,10 +9,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/NorthernMan54/homebridge-rf-fan-remote.git"
+    "url": "git://github.com/NorthernMan54/homebridge-hampton-bay.git"
   },
   "bugs": {
-    "url": "https://github.com/NorthernMan54/homebridge-rf-fan-remote/issues"
+    "url": "https://github.com/NorthernMan54/homebridge-hampton-bay/issues"
   },
   "engines": {
     "node": ">=0.12.0",

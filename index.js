@@ -1,7 +1,7 @@
 // config.json
 
 //{
-//          "accessory": "http-rf-fan-remote",
+//          "accessory": "http-hampton-bay",
 //          "name": "Power",
 //	  "url": "http://ESP_869815/msg?repeat=2&rdelay=100&pdelay=1&address=16388&code=538BC81:PANASONIC:48",
 //    "remote_code": "1011100101100100"  // 16 Bits
@@ -14,7 +14,7 @@
 
 "use strict";
 
-var debug = require('debug')('RFRemote');
+var debug = require('debug')('HBay');
 var request = require("request");
 var Service, Characteristic;
 
@@ -38,7 +38,7 @@ var fanCommands = {
   pulse: 10,
   pdelay: 10,
   rdeley: 600,
-  busy: 1,
+  busy: .250,
   start: 25
 }
 
@@ -47,10 +47,10 @@ module.exports = function(homebridge) {
   Service = homebridge.hap.Service;
   Characteristic = homebridge.hap.Characteristic;
 
-  homebridge.registerAccessory("homebridge-rf-fan-remote", "RFRemote", RFRemote);
+  homebridge.registerAccessory("homebridge-hampton-bay", "HBay", HBay);
 }
 
-function RFRemote(log, config) {
+function HBay(log, config) {
   this.log = log;
   this.name = config.name;
 
@@ -125,11 +125,11 @@ function RFRemote(log, config) {
 
 }
 
-RFRemote.prototype.getServices = function() {
+HBay.prototype.getServices = function() {
   return [this._fan, this._light];
 }
 
-RFRemote.prototype._fanOn = function(on, callback) {
+HBay.prototype._fanOn = function(on, callback) {
 
   this.log("Setting " + this.name + " _fanOn to " + on);
 
@@ -138,10 +138,10 @@ RFRemote.prototype._fanOn = function(on, callback) {
     if (!this._fan.getCharacteristic(Characteristic.On).value) {
       this.httpRequest("toggle", this.url, _fanSpeed(this._fan.getCharacteristic(Characteristic.RotationSpeed).value), 1, fanCommands.busy, function(error, response, responseBody) {
         if (error) {
-          this.log('RFRemote failed: %s', error.message);
+          this.log('HBay failed: %s', error.message);
           callback(error);
         } else {
-          //  debug('RFRemote succeeded!', this.url);
+          //  debug('HBay succeeded!', this.url);
           callback();
         }
       }.bind(this));
@@ -152,26 +152,26 @@ RFRemote.prototype._fanOn = function(on, callback) {
   } else {
     this.httpRequest("toggle", this.url, fanCommands.fan0, 1, fanCommands.busy, function(error, response, responseBody) {
       if (error) {
-        this.log('RFRemote failed: %s', error.message);
+        this.log('HBay failed: %s', error.message);
         callback(error);
       } else {
-        //  debug('RFRemote succeeded!', this.url);
+        //  debug('HBay succeeded!', this.url);
         callback();
       }
     }.bind(this));
   }
 }
 
-RFRemote.prototype._fanSpeed = function(value, callback) {
+HBay.prototype._fanSpeed = function(value, callback) {
 
   if (value > 0) {
     this.log("Setting " + this.name + " _fanSpeed to " + value);
     this.httpRequest("toggle", this.url, _fanSpeed(value), 1, fanCommands.busy, function(error, response, responseBody) {
       if (error) {
-        this.log('RFRemote failed: %s', error.message);
+        this.log('HBay failed: %s', error.message);
         callback(error);
       } else {
-        //  debug('RFRemote succeeded!', this.url);
+        //  debug('HBay succeeded!', this.url);
         callback();
       }
     }.bind(this));
@@ -184,7 +184,7 @@ RFRemote.prototype._fanSpeed = function(value, callback) {
   }
 }
 
-RFRemote.prototype._lightOn = function(on, callback) {
+HBay.prototype._lightOn = function(on, callback) {
 
   this.log("Setting " + this.name + " _lightOn to " + on);
 
@@ -192,27 +192,27 @@ RFRemote.prototype._lightOn = function(on, callback) {
 
     this.httpRequest("toggle", this.url, fanCommands.light, 1, fanCommands.busy, function(error, response, responseBody) {
       if (error) {
-        this.log('RFRemote failed: %s', error.message);
+        this.log('HBay failed: %s', error.message);
         callback(error);
       } else {
-        //  debug('RFRemote succeeded!', this.url);
+        //  debug('HBay succeeded!', this.url);
         callback();
       }
     }.bind(this));
   } else {
     this.httpRequest("toggle", this.url, fanCommands.light, 1, fanCommands.busy, function(error, response, responseBody) {
       if (error) {
-        this.log('RFRemote failed: %s', error.message);
+        this.log('HBay failed: %s', error.message);
         callback(error);
       } else {
-        //  debug('RFRemote succeeded!', this.url);
+        //  debug('HBay succeeded!', this.url);
         callback();
       }
     }.bind(this));
   }
 }
 
-RFRemote.prototype._fanDirection = function(on, callback) {
+HBay.prototype._fanDirection = function(on, callback) {
 
   this.log("Setting " + this.name + " _summerSetting to " + on);
 
@@ -220,10 +220,10 @@ RFRemote.prototype._fanDirection = function(on, callback) {
     this.direction = true;
     this.httpRequest("direction", this.url, fanCommands.reverse, 1, fanCommands.busy, function(error, response, responseBody) {
       if (error) {
-        this.log('RFRemote failed: %s', error.message);
+        this.log('HBay failed: %s', error.message);
         callback(error);
       } else {
-        //  debug('RFRemote succeeded!', this.url);
+        //  debug('HBay succeeded!', this.url);
         callback();
       }
     }.bind(this));
@@ -231,17 +231,17 @@ RFRemote.prototype._fanDirection = function(on, callback) {
     this.direction = false;
     this.httpRequest("direction", this.url, fanCommands.forward, 1, fanCommands.busy, function(error, response, responseBody) {
       if (error) {
-        this.log('RFRemote failed: %s', error.message);
+        this.log('HBay failed: %s', error.message);
         callback(error);
       } else {
-        //  debug('RFRemote succeeded!', this.url);
+        //  debug('HBay succeeded!', this.url);
         callback();
       }
     }.bind(this));
   }
 }
 
-RFRemote.prototype._lightBrightness = function(value, callback) {
+HBay.prototype._lightBrightness = function(value, callback) {
 
   //debug("Device", this._fan);
 
@@ -269,10 +269,10 @@ RFRemote.prototype._lightBrightness = function(value, callback) {
     this.log("Turning down " + this.name + " by " + Math.abs(delta));
     this.httpRequest("down", this.url, this.down_data, Math.abs(delta) + this.count, fanCommands.busy, function(error, response, responseBody) {
       if (error) {
-        this.log('RFRemote failed: %s', error.message);
+        this.log('HBay failed: %s', error.message);
         callback(error);
       } else {
-        //  debug('RFRemote succeeded!', this.url);
+        //  debug('HBay succeeded!', this.url);
         callback();
       }
     }.bind(this));
@@ -282,10 +282,10 @@ RFRemote.prototype._lightBrightness = function(value, callback) {
     this.log("Turning up " + this.name + " by " + Math.abs(delta));
     this.httpRequest("up", this.url, this.up_data, Math.abs(delta) + this.count, fanCommands.busy, function(error, response, responseBody) {
       if (error) {
-        this.log('RFRemote failed: %s', error.message);
+        this.log('HBay failed: %s', error.message);
         callback(error);
       } else {
-        //  debug('RFRemote succeeded!', this.url);
+        //  debug('HBay succeeded!', this.url);
         callback();
       }
     }.bind(this));
@@ -296,7 +296,7 @@ RFRemote.prototype._lightBrightness = function(value, callback) {
   }
 }
 
-RFRemote.prototype._setState = function(on, callback) {
+HBay.prototype._setState = function(on, callback) {
 
   this.log("Turning " + this.name + " to " + on);
 
@@ -305,10 +305,10 @@ RFRemote.prototype._setState = function(on, callback) {
   if (on && !this._fan.getCharacteristic(Characteristic.On).value) {
     this.httpRequest("on", this.url, this.on_data, 1, fanCommands.busy, function(error, response, responseBody) {
       if (error) {
-        this.log('RFRemote failed: %s', error.message);
+        this.log('HBay failed: %s', error.message);
         callback(error);
       } else {
-        //  debug('RFRemote succeeded!', this.url);
+        //  debug('HBay succeeded!', this.url);
         var current = this._fan.getCharacteristic(Characteristic.RotationSpeed)
           .value;
         if (current != this.start && this.start != undefined) {
@@ -321,10 +321,10 @@ RFRemote.prototype._setState = function(on, callback) {
   } else if (!on && this._fan.getCharacteristic(Characteristic.On).value) {
     this.httpRequest("off", this.url, this.off_data, 1, fanCommands.busy, function(error, response, responseBody) {
       if (error) {
-        this.log('RFRemote failed: %s', error.message);
+        this.log('HBay failed: %s', error.message);
         callback(error);
       } else {
-        //  debug('RFRemote succeeded!', this.url);
+        //  debug('HBay succeeded!', this.url);
         callback();
       }
     }.bind(this));
@@ -334,7 +334,7 @@ RFRemote.prototype._setState = function(on, callback) {
   }
 }
 
-RFRemote.prototype.resetDevice = function() {
+HBay.prototype.resetDevice = function() {
   debug("Reseting volume on device", this.name);
   this.httpRequest("on", this.url, this.on_data, 1, fanCommands.busy, function(error, response, responseBody) {
 
@@ -361,7 +361,7 @@ RFRemote.prototype.resetDevice = function() {
 
 }
 
-RFRemote.prototype.httpRequest = function(name, url, command, count, sleep, callback) {
+HBay.prototype.httpRequest = function(name, url, command, count, sleep, callback) {
   //debug("url",url,"Data",data);
   // Content-Length is a workaround for a bug in both request and ESP8266WebServer - request uses lower case, and ESP8266WebServer only uses upper case
 
