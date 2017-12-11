@@ -44,5 +44,5 @@ This is the dip switches on your control module.
 
 # Credits
 
-* mdhiggins - Creating the ESP8266 based IR Blaster, sharing your plans and source.
+* https://github.com/mdhiggins - Creating the ESP8266 based IR Blaster, sharing your plans and source.
 * nfarina - For creating the dummy plugin which I used as base for this plugin.
