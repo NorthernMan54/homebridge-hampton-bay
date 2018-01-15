@@ -17,6 +17,8 @@
 var debug = require('debug')('HBay');
 var request = require("request");
 var Service, Characteristic;
+var os = require("os");
+var hostname = os.hostname();
 
 var fanCommands = {
   fan0:  "111101",
@@ -126,7 +128,14 @@ function HBay(log, config) {
 }
 
 HBay.prototype.getServices = function() {
-  return [this._fan, this._light];
+  var informationService = new Service.AccessoryInformation();
+
+    informationService
+      .setCharacteristic(Characteristic.Manufacturer, "NorthernMan54")
+      .setCharacteristic(Characteristic.Model, this.service)
+      .setCharacteristic(Characteristic.SerialNumber, hostname+"-"+this.name)
+      .setCharacteristic(Characteristic.FirmwareRevision, require('./package.json').version);
+        return [this._fan, this._light, informationService];
 }
 
 HBay.prototype._fanOn = function(on, callback) {
