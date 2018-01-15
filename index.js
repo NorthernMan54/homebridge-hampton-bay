@@ -21,7 +21,7 @@ var os = require("os");
 var hostname = os.hostname();
 
 var fanCommands = {
-  fan0:  "111101",
+  fan0: "111101",
   fan25: "110111",
   fan50: "110111",
   fan75: "101111",
@@ -103,13 +103,13 @@ function HBay(log, config) {
       minStep: 25
     });
 
-//  this._fan
-//    .addCharacteristic(new Characteristic.RotationDirection())
-//    .on('set', this._fanDirection.bind(this));
+  //  this._fan
+  //    .addCharacteristic(new Characteristic.RotationDirection())
+  //    .on('set', this._fanDirection.bind(this));
 
   this._fan.getCharacteristic(Characteristic.RotationSpeed).updateValue(fanCommands.start);
 
-//  this._fan.getCharacteristic(Characteristic.RotationDirection).updateValue(this.direction);
+  //  this._fan.getCharacteristic(Characteristic.RotationDirection).updateValue(this.direction);
 
   debug("Adding Light", this.name);
   this._light = new Service.Lightbulb(this.name);
@@ -130,12 +130,12 @@ function HBay(log, config) {
 HBay.prototype.getServices = function() {
   var informationService = new Service.AccessoryInformation();
 
-    informationService
-      .setCharacteristic(Characteristic.Manufacturer, "NorthernMan54")
-      .setCharacteristic(Characteristic.Model, this.service)
-      .setCharacteristic(Characteristic.SerialNumber, hostname+"-"+this.name)
-      .setCharacteristic(Characteristic.FirmwareRevision, require('./package.json').version);
-        return [this._fan, this._light, informationService];
+  informationService
+    .setCharacteristic(Characteristic.Manufacturer, "NorthernMan54")
+    .setCharacteristic(Characteristic.Model, this.service)
+    .setCharacteristic(Characteristic.SerialNumber, hostname + "-" + this.name)
+    .setCharacteristic(Characteristic.FirmwareRevision, require('./package.json').version);
+  return [this._fan, this._light, informationService];
 }
 
 HBay.prototype._fanOn = function(on, callback) {
