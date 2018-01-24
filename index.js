@@ -1,16 +1,16 @@
 // config.json
 
 //{
-//          "accessory": "http-hampton-bay",
-//          "name": "Power",
-//	  "url": "http://ESP_869815/msg?repeat=2&rdelay=100&pdelay=1&address=16388&code=538BC81:PANASONIC:48",
-//    "remote_code": "1011100101100100"  // 16 Bits
-//    "dimmable": true
-//    "direction": true
-//        }
+//  "accessory": "HBay",
+//  "name": "Power",
+//  "url": "http://ESP_869815/json?simple=1",
+//  "remote_code": "1011100101100100",
+//  "dimmable": true,
+//  "direction": true
+//}
 
-
-
+// Hampton Bay - No direction function
+// Dimming is not predictable, so not enabled
 
 "use strict";
 
@@ -21,27 +21,26 @@ var os = require("os");
 var hostname = os.hostname();
 
 var fanCommands = {
-  fan0: "111101",
-  fan25: "110111",
-  fan50: "110111",
-  fan75: "101111",
-  fan100: "011111",
-  Down: "110011",
+  fanOff: "111101",
+  fanLow: "110111",
+  fanMed: "101111",
+  fanHigh: "011111",
+//  Down: "110011",
   lightD: "111110",
-  reverse: "111011",
-  forward: "111010",
+//  reverse: "111011",
+//  forward: "111010",
   lightND: "111110",
-  sync: "111111",
+//  sync: "111111",
   header: "250",
   zero: ["200", "800"],
   one: ["600", "400"],
-  winter: "10",
-  summer: "00",
-  pulse: 10,
+//  winter: "10",
+//  summer: "00",
+  pulse: 8,
   pdelay: 10,
-  rdeley: 600,
+  rdelay: 600,
   busy: .250,
-  start: 25
+  start: 33
 }
 
 module.exports = function(homebridge) {
@@ -66,10 +65,10 @@ function HBay(log, config) {
 
   if (this.dimmable) {
     fanCommands.light = fanCommands.lightD;
-    fanCommands.dimmable = "1";
+    fanCommands.dimmable = "0";
   } else {
     fanCommands.light = fanCommands.lightND;
-    fanCommands.dimmable = "0";
+    fanCommands.dimmable = "1";
   }
 
   // Below are the legacy settings
@@ -92,7 +91,7 @@ function HBay(log, config) {
 
 
   debug("Adding Fan", this.name);
-  this._fan = new Service.Fan(this.name);
+  this._fan = new Service.Fan(this.name+" fan");
   this._fan.getCharacteristic(Characteristic.On)
     .on('set', this._fanOn.bind(this));
 
@@ -100,7 +99,7 @@ function HBay(log, config) {
     .addCharacteristic(new Characteristic.RotationSpeed())
     .on('set', this._fanSpeed.bind(this))
     .setProps({
-      minStep: 25
+      minStep: 5
     });
 
   //  this._fan
@@ -111,7 +110,7 @@ function HBay(log, config) {
 
   //  this._fan.getCharacteristic(Characteristic.RotationDirection).updateValue(this.direction);
 
-  debug("Adding Light", this.name);
+  debug("Adding Light", this.name+" light");
   this._light = new Service.Lightbulb(this.name);
   this._light.getCharacteristic(Characteristic.On)
     .on('set', this._lightOn.bind(this));
@@ -159,7 +158,7 @@ HBay.prototype._fanOn = function(on, callback) {
       callback();
     }
   } else {
-    this.httpRequest("toggle", this.url, fanCommands.fan0, 1, fanCommands.busy, function(error, response, responseBody) {
+    this.httpRequest("toggle", this.url, fanCommands.fanOff, 1, fanCommands.busy, function(error, response, responseBody) {
       if (error) {
         this.log('HBay failed: %s', error.message);
         callback(error);
@@ -473,20 +472,17 @@ function _fanSpeed(speed) {
   debug("Fan Speed", speed);
   var command;
   switch (true) {
-    case (speed < 15):
-      command = fanCommands.fan0;
+    case (speed < 16):
+      command = fanCommands.fanOff;
       break;
-    case (speed < 40):
-      command = fanCommands.fan25;
+    case (speed < 33+16):
+      command = fanCommands.fanLow;
       break;
-    case (speed < 65):
-      command = fanCommands.fan50;
-      break;
-    case (speed < 90):
-      command = fanCommands.fan75;
+    case (speed < 66+16):
+      command = fanCommands.fanMed;
       break;
     case (speed < 101):
-      command = fanCommands.fan100;
+      command = fanCommands.fanHigh;
       break;
   }
   return command;
