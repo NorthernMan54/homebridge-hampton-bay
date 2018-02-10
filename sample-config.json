@@ -14,7 +14,7 @@
 
   "accessories": [
   {
-     "accessory": "HamptonBay",
+     "accessory": "HBay",
       "name": "Hampton",
       "url": "http://192.168.1.175/json?simple=1",
       "remote_code": "1111",
