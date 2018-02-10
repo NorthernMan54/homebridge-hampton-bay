@@ -1,13 +1,13 @@
 // config.json
 
 //{
-//  "accessory": "HBay",
-//  "name": "Power",
-//  "url": "http://ESP_869815/json?simple=1",
-//  "remote_code": "1011100101100100",
-//  "dimmable": true,
-//  "direction": true
-//}
+//     "accessory": "HBay",
+//      "name": "Hampton",
+//      "url": "http://192.168.1.171/json?simple=1",
+//      "remote_code": "0000",
+//      "winter": false,
+//      "out": 1
+//  }
 
 // Hampton Bay - No direction function
 // Dimming is not predictable, so not enabled
