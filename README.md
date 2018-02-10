@@ -2,7 +2,6 @@
 
 [![NPM Downloads](https://img.shields.io/npm/dm/homebridge-hampton-bay.svg?style=flat)](https://npmjs.org/package/homebridge-hampton-bay)
 
-
 I wrote this plugin as a wrapper around mdhiggins ESP8266-HTTP-IR-Blaster to control my Hampton Bay Ceiling fan. This particular fan uses a 303Mhz RF Remote control. To use this plugin, you need to build this ESP8266 based IR Blaster device https://github.com/mdhiggins/ESP8266-HTTP-IR-Blaster, except you need to substitute the LED with a 303Mhz RF Transmitter module.
 
 To source the 303Mhz transmitter module, I sacrificed a Hampton Bay remote, and removed the 303Mhz SAW Resonator from the transmitter module.  I then on a 315Mhz Transmitter module, removed the 315Mhz SAW Resonator and replaced it with the 303Mhz SAW Resonator. Creating my own 303Mhz Transmitter module.
