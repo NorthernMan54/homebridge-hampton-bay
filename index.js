@@ -5,7 +5,7 @@
 //      "name": "Hampton",
 //      "url": "http://192.168.1.171/json?simple=1",
 //      "remote_code": "0000",
-//      "winter": false,
+//      "dimmable": false,
 //      "out": 1
 //  }
 
@@ -25,17 +25,17 @@ var fanCommands = {
   fanLow: "110111",
   fanMed: "101111",
   fanHigh: "011111",
-//  Down: "110011",
+  //  Down: "110011",
   lightD: "111110",
-//  reverse: "111011",
-//  forward: "111010",
+  //  reverse: "111011",
+  //  forward: "111010",
   lightND: "111110",
-//  sync: "111111",
+  //  sync: "111111",
   header: "250",
   zero: ["200", "800"],
   one: ["600", "400"],
-//  winter: "10",
-//  summer: "00",
+  //  winter: "10",
+  //  summer: "00",
   pulse: 8,
   pdelay: 10,
   rdelay: 600,
@@ -58,7 +58,8 @@ function HBay(log, config) {
   this.remote_code = config.remote_code;
   this.url = config.url;
   this.dimmable = config.dimmable || false;
-  this.direction = config.winter || true;
+  this.light = config.light || true;
+  this.direction = config.winter || true; // Hampton does not support direction
   this.out = config.out || 1;
 
   //
@@ -91,7 +92,7 @@ function HBay(log, config) {
 
 
   debug("Adding Fan", this.name);
-  this._fan = new Service.Fan(this.name+" fan");
+  this._fan = new Service.Fan(this.name + " fan");
   this._fan.getCharacteristic(Characteristic.On)
     .on('set', this._fanOn.bind(this));
 
@@ -110,15 +111,17 @@ function HBay(log, config) {
 
   //  this._fan.getCharacteristic(Characteristic.RotationDirection).updateValue(this.direction);
 
-  debug("Adding Light", this.name+" light");
-  this._light = new Service.Lightbulb(this.name);
-  this._light.getCharacteristic(Characteristic.On)
-    .on('set', this._lightOn.bind(this));
+  if (this.light) {
+    debug("Adding Light", this.name + " light");
+    this._light = new Service.Lightbulb(this.name);
+    this._light.getCharacteristic(Characteristic.On)
+      .on('set', this._lightOn.bind(this));
 
-  if (this.dimmable) {
-    this._light
-      .addCharacteristic(new Characteristic.Brightness())
-      .on('set', this._lightBrightness.bind(this));
+    if (this.dimmable) {
+      this._light
+        .addCharacteristic(new Characteristic.Brightness())
+        .on('set', this._lightBrightness.bind(this));
+    }
   }
 
   if (this.start == undefined && this.on_data && this.up_data)
@@ -475,10 +478,10 @@ function _fanSpeed(speed) {
     case (speed < 16):
       command = fanCommands.fanOff;
       break;
-    case (speed < 33+16):
+    case (speed < 33 + 16):
       command = fanCommands.fanLow;
       break;
-    case (speed < 66+16):
+    case (speed < 66 + 16):
       command = fanCommands.fanMed;
       break;
     case (speed < 101):

@@ -25,10 +25,10 @@ To source the 303Mhz transmitter module, I sacrificed a Hampton Bay remote, and 
 Example config.json:
 
 ```
- "accessory": "HBay",
+ {"accessory": "HBay",
  "name": "Master",
  "url": "http://192.168.1.175/json?simple=1",
- "remote_code": "0000"
+ "remote_code": "0000"}
 ```
 
 ## Required settings
@@ -42,6 +42,7 @@ Example config.json:
 
 * dimmable - Is the light dimmable, defaults to false
 * out      - out setting for IR Blaster, defaults to 1
+* light    - Does the fan support a light, defaults to true
 
 # Finding remote code for your remote / fan
 

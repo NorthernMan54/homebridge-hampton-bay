@@ -18,7 +18,7 @@
         "name": "Hampton",
         "url": "http://192.168.1.171/json?simple=1",
         "remote_code": "0000",
-        "winter": false,
+        "dimmable": false,
         "out": 1
     }]
 }
