@@ -58,7 +58,7 @@ function HBay(log, config) {
   this.remote_code = config.remote_code;
   this.url = config.url;
   this.dimmable = config.dimmable || false;
-  this.light = config.light || true;
+  this.light = config.light ;      // TODO: This doesn't work for false
   this.direction = config.winter || true; // Hampton does not support direction
   this.out = config.out || 1;
 
@@ -137,7 +137,14 @@ HBay.prototype.getServices = function() {
     .setCharacteristic(Characteristic.Model, this.service)
     .setCharacteristic(Characteristic.SerialNumber, hostname + "-" + this.name)
     .setCharacteristic(Characteristic.FirmwareRevision, require('./package.json').version);
-  return [this._fan, this._light, informationService];
+
+    if ( this.light )
+    {
+      return [this._fan, this._light, informationService];
+    } else {
+      return [this._fan, informationService];
+    }
+
 }
 
 HBay.prototype._fanOn = function(on, callback) {
