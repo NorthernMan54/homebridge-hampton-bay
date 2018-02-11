@@ -57,12 +57,13 @@ function HBay(log, config) {
 
   this.remote_code = config.remote_code;
   this.url = config.url;
-  this.dimmable = config.dimmable || false;
-  this.light = config.light ;      // TODO: This doesn't work for false
+  this.dimmable = config.dimmable || false;   // Default to not dimmable
+  this.light = (config.light !== false);      // Default to has light
   this.direction = config.winter || true; // Hampton does not support direction
   this.out = config.out || 1;
 
-  //
+  debug("Light",this.light);
+  debug("Dimmable",this.dimmable);
 
   if (this.dimmable) {
     fanCommands.light = fanCommands.lightD;
