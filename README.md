@@ -8,9 +8,11 @@ To source the 303Mhz transmitter module, I sacrificed a Hampton Bay remote, and 
 
 # Circuit Diagram
 
-![Circuit](https://user-images.githubusercontent.com/19808920/35491945-c27b4b8e-0477-11e8-99ad-b183c7408e5e.jpg)
+## RF Transmitter
 
-![Schematic](https://user-images.githubusercontent.com/19808920/35491946-c67423c8-0477-11e8-8833-d8db0a61cc9d.jpg)
+![RF-LED](ESP%208266%20-%20RF%20Transmitter_bb.jpg)
+
+![DHT-YL](ESP%208266%20-%20RF%20Transmitter_schem.jpg)
 
 ## Breadboard view
 
