@@ -39,7 +39,7 @@ var fanCommands = {
   pulse: 8,
   pdelay: 10,
   rdelay: 600,
-  busy: .250,
+  busy: 250,
   start: 33
 }
 
@@ -54,6 +54,9 @@ module.exports = function(homebridge) {
 function HBay(log, config) {
   this.log = log;
   this.name = config.name;
+
+  this.fanName = config.fanName || this.name + " fan";
+  this.lightName = config.lightName || this.name;
 
   this.remote_code = config.remote_code;
   this.url = config.url;
@@ -92,8 +95,8 @@ function HBay(log, config) {
   this.working = Date.now();
 
 
-  debug("Adding Fan", this.name);
-  this._fan = new Service.Fan(this.name + " fan");
+  debug("Adding Fan", this.fanName);
+  this._fan = new Service.Fan(this.fanName);
   this._fan.getCharacteristic(Characteristic.On)
     .on('set', this._fanOn.bind(this));
 
@@ -113,8 +116,8 @@ function HBay(log, config) {
   //  this._fan.getCharacteristic(Characteristic.RotationDirection).updateValue(this.direction);
 
   if (this.light) {
-    debug("Adding Light", this.name + " light");
-    this._light = new Service.Lightbulb(this.name);
+    debug("Adding Light", this.lightName);
+    this._light = new Service.Lightbulb(this.lightName);
     this._light.getCharacteristic(Characteristic.On)
       .on('set', this._lightOn.bind(this));
 
@@ -150,7 +153,7 @@ HBay.prototype.getServices = function() {
 
 HBay.prototype._fanOn = function(on, callback) {
 
-  this.log("Setting " + this.name + " _fanOn to " + on);
+  this.log("Setting " + this.fanName + " _fanOn to " + on);
 
   if (on) {
     // Is the fan already on?  Don't repeat command
@@ -184,7 +187,7 @@ HBay.prototype._fanOn = function(on, callback) {
 HBay.prototype._fanSpeed = function(value, callback) {
 
   if (value > 0) {
-    this.log("Setting " + this.name + " _fanSpeed to " + value);
+    this.log("Setting " + this.fanName + " _fanSpeed to " + value);
     this.httpRequest("toggle", this.url, _fanSpeed(value), 1, fanCommands.busy, function(error, response, responseBody) {
       if (error) {
         this.log('HBay failed: %s', error.message);
@@ -195,7 +198,7 @@ HBay.prototype._fanSpeed = function(value, callback) {
       }
     }.bind(this));
   } else {
-    this.log("Not setting " + this.name + " _fanSpeed to " + value);
+    this.log("Not setting " + this.fanName + " _fanSpeed to " + value);
     setTimeout(function() {
       this._fan.getCharacteristic(Characteristic.RotationSpeed).updateValue(fanCommands.start);
     }.bind(this), 100);
@@ -205,7 +208,7 @@ HBay.prototype._fanSpeed = function(value, callback) {
 
 HBay.prototype._lightOn = function(on, callback) {
 
-  this.log("Setting " + this.name + " _lightOn to " + on);
+  this.log("Setting " + this.lightName + " _lightOn to " + on);
 
   if (on) {
 
@@ -233,7 +236,7 @@ HBay.prototype._lightOn = function(on, callback) {
 
 HBay.prototype._fanDirection = function(on, callback) {
 
-  this.log("Setting " + this.name + " _summerSetting to " + on);
+  this.log("Setting " + this.fanName + " _summerSetting to " + on);
 
   if (on) {
     this.direction = true;
@@ -264,7 +267,7 @@ HBay.prototype._lightBrightness = function(value, callback) {
 
   //debug("Device", this._fan);
 
-  this.log("Setting " + this.name + " _lightBrightness to " + value);
+  this.log("Setting " + this.lightName + " _lightBrightness to " + value);
 
   var current = this._fan.getCharacteristic(Characteristic.RotationSpeed)
     .value;
@@ -281,11 +284,11 @@ HBay.prototype._lightBrightness = function(value, callback) {
   var _current = Math.floor(current / (100 / this.steps));
   var delta = Math.round(_value - _current);
 
-  debug("Values", this.name, value, current, delta);
+  debug("Values", this.lightName, value, current, delta);
 
   if (delta < 0) {
     // Turn down device
-    this.log("Turning down " + this.name + " by " + Math.abs(delta));
+    this.log("Turning down " + this.lightName + " by " + Math.abs(delta));
     this.httpRequest("down", this.url, this.down_data, Math.abs(delta) + this.count, fanCommands.busy, function(error, response, responseBody) {
       if (error) {
         this.log('HBay failed: %s', error.message);
@@ -298,7 +301,7 @@ HBay.prototype._lightBrightness = function(value, callback) {
   } else if (delta > 0) {
 
     // Turn up device
-    this.log("Turning up " + this.name + " by " + Math.abs(delta));
+    this.log("Turning up " + this.lightName + " by " + Math.abs(delta));
     this.httpRequest("up", this.url, this.up_data, Math.abs(delta) + this.count, fanCommands.busy, function(error, response, responseBody) {
       if (error) {
         this.log('HBay failed: %s', error.message);
@@ -317,9 +320,9 @@ HBay.prototype._lightBrightness = function(value, callback) {
 
 HBay.prototype._setState = function(on, callback) {
 
-  this.log("Turning " + this.name + " to " + on);
+  this.log("Turning " + this.lightName + " to " + on);
 
-  debug("_setState", this.name, on, this._fan.getCharacteristic(Characteristic.On).value);
+  debug("_setState", this.lightName, on, this._fan.getCharacteristic(Characteristic.On).value);
 
   if (on && !this._fan.getCharacteristic(Characteristic.On).value) {
     this.httpRequest("on", this.url, this.on_data, 1, fanCommands.busy, function(error, response, responseBody) {
