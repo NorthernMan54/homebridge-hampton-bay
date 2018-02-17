@@ -42,9 +42,11 @@ Example config.json:
 
 ## Optional settings
 
-* dimmable - Is the light dimmable, defaults to false
-* light    - Does the fan support a light, defaults to true
-* out      - out setting for IR Blaster, defaults to 1
+* dimmable  - Is the light dimmable, defaults to false
+* light     - Does the fan support a light, defaults to true
+* out       - out setting for IR Blaster, defaults to 1
+* fanName   - Name for fan device
+* lightName - Name for light device
 
 # Finding remote code for your remote / fan
 
