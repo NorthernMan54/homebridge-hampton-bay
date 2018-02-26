@@ -138,7 +138,7 @@ HBay.prototype.getServices = function() {
 
   informationService
     .setCharacteristic(Characteristic.Manufacturer, "NorthernMan54")
-    .setCharacteristic(Characteristic.Model, this.service)
+    .setCharacteristic(Characteristic.Model, "hampton-bay")
     .setCharacteristic(Characteristic.SerialNumber, hostname + "-" + this.name)
     .setCharacteristic(Characteristic.FirmwareRevision, require('./package.json').version);
 
