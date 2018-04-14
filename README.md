@@ -29,7 +29,7 @@ Example config.json:
 ```
  {"accessory": "HBay",
  "name": "Master",
- "url": "http://192.168.1.175/json?simple=1",
+ "irBlaster": "ESP_8695EC",
  "remote_code": "0000"}
 ```
 
@@ -37,7 +37,7 @@ Example config.json:
 
 * accessory     - This must be "HBay"
 * name          - Name of the device
-* url           - URL of the device, including any options ie "http://192.168.1.175/json?simple=1",
+* irBlaster     - Name or ip address of your IRBlaster Device
 * remote_code   - This is the 4 Bit unique code for your fan controlled by the dip switches. 0 is switch UP and 1 is switch down.
 
 ## Optional settings

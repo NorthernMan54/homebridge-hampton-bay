@@ -1,13 +1,13 @@
 // config.json
 
 //{
-//     "accessory": "HBay",
-//      "name": "Hampton",
-//      "url": "http://192.168.1.171/json?simple=1",
-//      "remote_code": "0000",
-//      "dimmable": false,
-//      "out": 1
-//  }
+//  "accessory": "HBay",
+//  "name": "Ceiling One",
+//  "fanName": "Fan One",
+//  "irblaster": "ESP_8695EC",
+//  "remote_code": "1000",
+//  "out": 3
+//}
 
 // Hampton Bay - No direction function
 // Dimming is not predictable, so not enabled
@@ -59,14 +59,20 @@ function HBay(log, config) {
   this.lightName = config.lightName || this.name;
 
   this.remote_code = config.remote_code;
-  this.url = config.url;
-  this.dimmable = config.dimmable || false;   // Default to not dimmable
-  this.light = (config.light !== false);      // Default to has light
+  this.irblaster = config.irblaster;
+  const dns = require('dns')
+  dns.lookup(this.irblaster, function(err, result) {
+    this.url = "http://" + result + "/json?simple=1";
+    debug("URL", this.url);
+  }.bind(this));
+
+  this.dimmable = config.dimmable || false; // Default to not dimmable
+  this.light = (config.light !== false); // Default to has light
   this.direction = config.winter || true; // Hampton does not support direction
   this.out = config.out || 1;
 
-  debug("Light",this.light);
-  debug("Dimmable",this.dimmable);
+  debug("Light", this.light);
+  debug("Dimmable", this.dimmable);
 
   if (this.dimmable) {
     fanCommands.light = fanCommands.lightD;
@@ -142,12 +148,11 @@ HBay.prototype.getServices = function() {
     .setCharacteristic(Characteristic.SerialNumber, hostname + "-" + this.name)
     .setCharacteristic(Characteristic.FirmwareRevision, require('./package.json').version);
 
-    if ( this.light )
-    {
-      return [this._fan, this._light, informationService];
-    } else {
-      return [this._fan, informationService];
-    }
+  if (this.light) {
+    return [this._fan, this._light, informationService];
+  } else {
+    return [this._fan, informationService];
+  }
 
 }
 
