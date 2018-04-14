@@ -59,9 +59,9 @@ function HBay(log, config) {
   this.lightName = config.lightName || this.name;
 
   this.remote_code = config.remote_code;
-  this.irblaster = config.irblaster;
+  this.irBlaster = config.irBlaster;
   const dns = require('dns')
-  dns.lookup(this.irblaster, function(err, result) {
+  dns.lookup(this.irBlaster, function(err, result) {
     this.url = "http://" + result + "/json?simple=1";
     debug("URL", this.url);
   }.bind(this));
