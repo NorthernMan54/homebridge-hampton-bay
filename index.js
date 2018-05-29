@@ -56,7 +56,7 @@ function HBay(log, config) {
   this.name = config.name;
 
   this.fanName = config.fanName || this.name + " fan";
-  this.lightName = config.lightName || this.name;
+  this.lightName = config.lightName || this.name + " light";
 
   this.remote_code = config.remote_code;
   this.irBlaster = config.irBlaster;
