@@ -215,7 +215,7 @@ HBay.prototype._lightOn = function(on, callback) {
 
   this.log("Setting " + this.lightName + " _lightOn to " + on);
 
-  if (on) {
+  if (on && !this._light.getCharacteristic(Characteristic.On).value) {
 
     execQueue.call(this, "toggle", this.url, fanCommands.light, 1, fanCommands.busy, function(error, response, responseBody) {
       if (error) {
@@ -226,7 +226,7 @@ HBay.prototype._lightOn = function(on, callback) {
         callback();
       }
     }.bind(this));
-  } else {
+  } else if (!on && this._light.getCharacteristic(Characteristic.On).value) {
     execQueue.call(this, "toggle", this.url, fanCommands.light, 1, fanCommands.busy, function(error, response, responseBody) {
       if (error) {
         this.log('HBay failed: %s', error.message);
@@ -236,6 +236,9 @@ HBay.prototype._lightOn = function(on, callback) {
         callback();
       }
     }.bind(this));
+  } else {
+    debug("Do nothing");
+    callback();
   }
 }
 
