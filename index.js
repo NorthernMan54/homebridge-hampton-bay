@@ -31,13 +31,13 @@ var fanCommands = {
   //  forward: "111010",
   lightND: "111110",
   //  sync: "111111",
-  header: "250",
-  zero: ["200", "800"],
-  one: ["600", "400"],
+  header: "450",
+  zero: ["200", "900"],
+  one: ["700", "400"],
   //  winter: "10",
   //  summer: "00",
-  pulse: 8,
-  pdelay: 10,
+  pulse: 7,
+  pdelay: 12,
   rdelay: 600,
   busy: 250,
   start: 33
@@ -63,7 +63,7 @@ function HBay(log, config) {
   const dns = require('dns')
   dns.lookup(this.irBlaster, function(err, result) {
     this.url = "http://" + result + "/json?simple=1";
-    debug("URL", this.url);
+    //debug("URL", this.url);
   }.bind(this));
 
   this.dimmable = config.dimmable || false; // Default to not dimmable
