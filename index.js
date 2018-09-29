@@ -39,7 +39,7 @@ var fanCommands = {
   pulse: 8,
   pdelay: 10,
   rdelay: 600,
-  busy: 350,
+  busy: 400,
   start: 33
 }
 
