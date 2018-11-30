@@ -1,6 +1,6 @@
 if ~/npm/bin/nsp check --filter 2; then
-	npm version patch
 	git add .
+	npm version patch
 	git commit -m "$1"
 	git push origin master --tags
 	npm publish

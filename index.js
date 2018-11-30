@@ -1,5 +1,3 @@
-// config.json
-
 //{
 //  "accessory": "HBay",
 //  "name": "Ceiling One",
