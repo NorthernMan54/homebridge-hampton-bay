@@ -1,12 +1,11 @@
-
-//{
+// {
 //  "accessory": "HBay",
 //  "name": "Ceiling One",
 //  "fanName": "Fan One",
 //  "irblaster": "ESP_8695EC",
 //  "remote_code": "1000",
 //  "out": 3
-//}
+// }
 
 // Hampton Bay - No direction function
 // Dimming is not predictable, so not enabled
@@ -41,15 +40,14 @@ var fanCommands = {
   rdelay: 600,
   busy: 400,
   start: 33
-}
+};
 
 module.exports = function(homebridge) {
-
   Service = homebridge.hap.Service;
   Characteristic = homebridge.hap.Characteristic;
 
   homebridge.registerAccessory("homebridge-hampton-bay", "HBay", HBay);
-}
+};
 
 function HBay(log, config) {
   this.log = log;
@@ -60,10 +58,10 @@ function HBay(log, config) {
 
   this.remote_code = config.remote_code;
   this.irBlaster = config.irBlaster;
-  const dns = require('dns')
+  const dns = require('dns');
   dns.lookup(this.irBlaster, function(err, result) {
     this.url = "http://" + result + "/json?simple=1";
-    //debug("URL", this.url);
+    // debug("URL", this.url);
   }.bind(this));
 
   this.dimmable = config.dimmable || false; // Default to not dimmable
@@ -100,7 +98,6 @@ function HBay(log, config) {
 
   this.working = Date.now();
 
-
   debug("Adding Fan", this.fanName);
   this._fan = new Service.Fan(this.fanName);
   this._fan.getCharacteristic(Characteristic.On)
@@ -134,9 +131,9 @@ function HBay(log, config) {
     }
   }
 
-  if (this.start == undefined && this.on_data && this.up_data)
+  if (this.start === undefined && this.on_data && this.up_data) {
     this.resetDevice();
-
+  }
 }
 
 HBay.prototype.getServices = function() {
@@ -153,11 +150,9 @@ HBay.prototype.getServices = function() {
   } else {
     return [this._fan, informationService];
   }
-
-}
+};
 
 HBay.prototype._fanOn = function(on, callback) {
-
   this.log("Setting " + this.fanName + " _fanOn to " + on);
 
   if (on) {
@@ -187,10 +182,9 @@ HBay.prototype._fanOn = function(on, callback) {
       }
     }.bind(this));
   }
-}
+};
 
 HBay.prototype._fanSpeed = function(value, callback) {
-
   if (value > 0) {
     this.log("Setting " + this.fanName + " _fanSpeed to " + value);
     execQueue.call(this, "toggle", this.url, _fanSpeed(value), 1, fanCommands.busy, function(error, response, responseBody) {
@@ -209,14 +203,12 @@ HBay.prototype._fanSpeed = function(value, callback) {
     }.bind(this), 100);
     callback();
   }
-}
+};
 
 HBay.prototype._lightOn = function(on, callback) {
-
   this.log("Setting " + this.lightName + " _lightOn to " + on);
 
   if (on && !this._light.getCharacteristic(Characteristic.On).value) {
-
     execQueue.call(this, "toggle", this.url, fanCommands.light, 1, fanCommands.busy, function(error, response, responseBody) {
       if (error) {
         this.log('HBay failed: %s', error.message);
@@ -240,10 +232,9 @@ HBay.prototype._lightOn = function(on, callback) {
     debug("Do nothing");
     callback();
   }
-}
+};
 
 HBay.prototype._fanDirection = function(on, callback) {
-
   this.log("Setting " + this.fanName + " _summerSetting to " + on);
 
   if (on) {
@@ -269,21 +260,20 @@ HBay.prototype._fanDirection = function(on, callback) {
       }
     }.bind(this));
   }
-}
+};
 
 HBay.prototype._lightBrightness = function(value, callback) {
-
-  //debug("Device", this._fan);
-
+  // debug("Device", this._fan);
   this.log("Setting " + this.lightName + " _lightBrightness to " + value);
 
   var current = this._fan.getCharacteristic(Characteristic.RotationSpeed)
     .value;
 
-  if (current == undefined)
+  if (current === undefined) {
     current = this.start;
+  }
 
-  if (value == 100 && current == 0) {
+  if (value === 100 && current === 0) {
     callback(null, current);
     return;
   }
@@ -307,8 +297,8 @@ HBay.prototype._lightBrightness = function(value, callback) {
       }
     }.bind(this));
   } else if (delta > 0) {
-
     // Turn up device
+
     this.log("Turning up " + this.lightName + " by " + Math.abs(delta));
     execQueue.call(this, "up", this.url, this.up_data, Math.abs(delta) + this.count, fanCommands.busy, function(error, response, responseBody) {
       if (error) {
@@ -319,15 +309,13 @@ HBay.prototype._lightBrightness = function(value, callback) {
         callback();
       }
     }.bind(this));
-
   } else {
     this.log("Not controlling " + this.name, value, current, delta);
     callback();
   }
-}
+};
 
 HBay.prototype._setState = function(on, callback) {
-
   this.log("Turning " + this.lightName + " to " + on);
 
   debug("_setState", this.lightName, on, this._fan.getCharacteristic(Characteristic.On).value);
@@ -341,7 +329,7 @@ HBay.prototype._setState = function(on, callback) {
         //  debug('HBay succeeded!', this.url);
         var current = this._fan.getCharacteristic(Characteristic.RotationSpeed)
           .value;
-        if (current != this.start && this.start != undefined) {
+        if (current !== this.start && this.start !== undefined) {
           debug("Setting level after turning on ", this.start);
           this._fan.getCharacteristic(Characteristic.RotationSpeed).updateValue(this.start);
         }
@@ -362,7 +350,7 @@ HBay.prototype._setState = function(on, callback) {
     debug("Do nothing");
     callback();
   }
-}
+};
 
 HBay.prototype.resetDevice = function() {
   debug("Reseting volume on device", this.name);
@@ -372,11 +360,10 @@ HBay.prototype.resetDevice = function() {
   execQueue.call(this, "off", this.url, this.off_data, 1, fanCommands.busy, function(error, response, responseBody) {
     this._fan.getCharacteristic(Characteristic.RotationSpeed).updateValue(2);
   }.bind(this));
-
-}
+};
 
 function httpRequest(name, url, command, count, sleep, callback) {
-  //debug("url",url,"Data",data);
+  // debug("url",url,"Data",data);
   // Content-Length is a workaround for a bug in both request and ESP8266WebServer - request uses lower case, and ESP8266WebServer only uses upper case
 
   var cmdTime = Date.now() + sleep * count;
@@ -387,29 +374,28 @@ function httpRequest(name, url, command, count, sleep, callback) {
   data[0].rdelay = fanCommands.rdelay;
 
   var body = JSON.stringify(data);
-  //debug("Body", body);
+  // debug("Body", body);
   request({
-      url: url,
-      method: "POST",
-      timeout: 5000,
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': body.length
-      },
-      body: body
+    url: url,
+    method: "POST",
+    timeout: 5000,
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': body.length
     },
-    function(error, response, body) {
-      if (response) {
-        //  debug("Response", response.statusCode, response.statusMessage);
-      } else {
-        debug("Error", name, url, count, sleep, callback, error);
-      }
+    body: body
+  },
+  function(error, response, body) {
+    if (response) {
+      //  debug("Response", response.statusCode, response.statusMessage);
+    } else {
+      debug("Error", name, url, count, sleep, callback, error);
+    }
 
-      setTimeout(function() {
-        if (callback) callback(error, response, body);
-      }, cmdTime - Date.now());
-    }.bind(this));
-
+    setTimeout(function() {
+      if (callback) callback(error, response, body);
+    }, cmdTime - Date.now());
+  });
 }
 
 cmdQueue = {
@@ -425,33 +411,27 @@ function execQueue() {
 
   // run the queue
   runQueue();
-
 }
 
 function runQueue() {
-
   if (!cmdQueue.isRunning && cmdQueue.items.length > 0) {
-
     cmdQueue.isRunning = true;
     var cmds = cmdQueue.items.shift();
     var that = cmds[0];
     var args = cmds[1];
 
     if (args.length > 5) {
-
       // wrap callback with another function to toggle isRunning
+
       var callback = args[args.length - 1];
       args[args.length - 1] = function() {
-
         callback.apply(null, arguments);
         cmdQueue.isRunning = false;
         runQueue();
-
       };
-
     } else {
-
       // add callback to toggle isRunning
+
       args[args.length] = function() {
         cmdQueue.isRunning = false;
         runQueue();
@@ -459,9 +439,7 @@ function runQueue() {
       args.length = args.length + 1;
     }
     httpRequest.apply(that, args);
-
   }
-
 }
 
 function _buildBody(command) {
@@ -475,7 +453,7 @@ function _buildBody(command) {
   }
 
   var remoteCommand = "0" + this.remote_code + fanCommands.dimmable + command;
-  //debug("This is the command", _splitAt8(remoteCommand));
+  // debug("This is the command", _splitAt8(remoteCommand));
 
   var data = [];
   data.push(fanCommands.header);
@@ -505,7 +483,7 @@ function _buildBody(command) {
     "pulse": fanCommands.pulse,
     "pdelay": fanCommands.pdelay
   }];
-  //debug("This is the body", body);
+  // debug("This is the body", body);
   return body;
 }
 
