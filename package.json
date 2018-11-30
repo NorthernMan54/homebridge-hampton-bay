@@ -1,6 +1,6 @@
 {
   "name": "homebridge-hampton-bay",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "Homebridge Plugin for the FAN61T-4SP 315Mhz Fan Remote",
   "license": "ISC",
   "keywords": [
