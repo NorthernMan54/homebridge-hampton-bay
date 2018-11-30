@@ -1,5 +1,6 @@
 if ~/npm/bin/nsp check --filter 2; then
 	git add .
+	git commit -m "$1"
 	npm version patch
 	npm publish
 	git commit -m "$1"
