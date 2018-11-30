@@ -14,6 +14,7 @@
 
 var debug = require('debug')('HBay');
 var request = require("request");
+const packageConfig = require('./package.json');
 var Service, Characteristic, cmdQueue;
 var os = require("os");
 var hostname = os.hostname();
@@ -64,6 +65,8 @@ function HBay(log, config) {
     // debug("URL", this.url);
   }.bind(this));
 
+
+
   this.dimmable = config.dimmable || false; // Default to not dimmable
   this.light = (config.light !== false); // Default to has light
   this.direction = config.winter || true; // Hampton does not support direction
@@ -97,6 +100,11 @@ function HBay(log, config) {
   this.count = config.count || 0;
 
   this.working = Date.now();
+
+  this.log.info(
+    '%s v%s, node %s',
+    packageConfig.name, packageConfig.version, process.version
+  );
 
   debug("Adding Fan", this.fanName);
   this._fan = new Service.Fan(this.fanName);
