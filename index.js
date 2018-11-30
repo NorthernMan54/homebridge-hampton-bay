@@ -32,8 +32,9 @@ var fanCommands = {
   lightND: "111110",
   //  sync: "111111",
   header: "350",
-  zero: ["250", "800"],
-  one: ["650", "400"],
+  // Format is Off time, On time
+  zero: ["295", "700"],
+  one: ["695", "300"],
   //  winter: "10",
   //  summer: "00",
   pulse: 8,
