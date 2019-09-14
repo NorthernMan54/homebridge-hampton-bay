@@ -18,6 +18,7 @@ const packageConfig = require('./package.json');
 var Service, Characteristic, cmdQueue;
 var os = require("os");
 var hostname = os.hostname();
+const dns = require('dns');
 
 var fanCommands = {
   fanOff: "111101",
@@ -59,13 +60,8 @@ function HBay(log, config) {
 
   this.remote_code = config.remote_code;
   this.irBlaster = config.irBlaster;
-  const dns = require('dns');
-  dns.lookup(this.irBlaster, function(err, result) {
-    this.url = "http://" + result + "/json?simple=1";
-    // debug("URL", this.url);
-  }.bind(this));
 
-
+  findDevice.call(this);
 
   this.dimmable = config.dimmable || false; // Default to not dimmable
   this.light = (config.light !== false); // Default to has light
@@ -523,4 +519,20 @@ function _fanSpeed(speed) {
       break;
   }
   return command;
+}
+
+function findDevice() {
+  dns.lookup(this.irBlaster, function(err, result) {
+    if (err || result === undefined) {
+      // if failed, retry device discovery every minute
+      debug("WARNING: Dns lookup failed", err, result);
+      this.log("WARNING: DNS name resolution of %s failed, retrying in 1 minute", this.irBlaster);
+      setTimeout(function() {
+        findDevice.call(this);
+      }.bind(this), 60 * 1000);
+    } else {
+      this.url = "http://" + result + "/json?simple=1";
+      // debug("URL", this.url);
+    }
+  }.bind(this));
 }
