@@ -379,27 +379,33 @@ function httpRequest(name, url, command, count, sleep, callback) {
 
   var body = JSON.stringify(data);
   // debug("Body", body);
-  request({
-    url: url,
-    method: "POST",
-    timeout: 5000,
-    headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': body.length
-    },
-    body: body
-  },
-  function(error, response, body) {
-    if (response) {
-      //  debug("Response", response.statusCode, response.statusMessage);
-    } else {
-      debug("Error", name, url, count, sleep, callback, error);
-    }
+  if (this.url) {
+    request({
+        url: url,
+        method: "POST",
+        timeout: 5000,
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': body.length
+        },
+        body: body
+      },
+      function(error, response, body) {
+        if (response) {
+          //  debug("Response", response.statusCode, response.statusMessage);
+        } else {
+          debug("Error", name, url, count, sleep, callback, error);
+          this.url = null;
+          findDevice.call(this);
+        }
 
-    setTimeout(function() {
-      if (callback) callback(error, response, body);
-    }, cmdTime - Date.now());
-  });
+        setTimeout(function() {
+          if (callback) callback(error, response, body);
+        }, cmdTime - Date.now());
+      });
+  } else {
+    callback(new Error("Unknown host " + this.name), "", "");
+  }
 }
 
 cmdQueue = {
@@ -408,7 +414,6 @@ cmdQueue = {
 };
 
 function execQueue() {
-
   // push these args to the end of the queue
 
   cmdQueue.items.push([this, arguments]);
@@ -494,8 +499,9 @@ function _buildBody(command) {
 function _splitAt8(string) {
   var response = "";
   for (var x = 0; x < string.length; x++) {
-    if (x % 8 === 0)
+    if (x % 8 === 0) {
       response += " ";
+    }
     response += string.charAt(x);
   }
   return response;
@@ -532,7 +538,7 @@ function findDevice() {
       }.bind(this), 60 * 1000);
     } else {
       this.url = "http://" + result + "/json?simple=1";
-      // debug("URL", this.url);
+      debug("URL", this.url);
     }
   }.bind(this));
 }
