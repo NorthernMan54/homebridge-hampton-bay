@@ -528,6 +528,7 @@ function _fanSpeed(speed) {
 }
 
 function findDevice() {
+  debug("findDevice()", this.irBlaster);
   dns.lookup(this.irBlaster, function(err, result) {
     if (err || result === undefined) {
       // if failed, retry device discovery every minute
