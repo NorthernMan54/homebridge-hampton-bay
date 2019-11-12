@@ -378,7 +378,8 @@ function httpRequest(name, url, command, count, sleep, callback) {
   data[0].rdelay = fanCommands.rdelay;
 
   var body = JSON.stringify(data);
-  // debug("Body", body);
+  var that = this;
+  // debug("httpRequest", this);
   if (this.url) {
     request({
         url: url,
@@ -394,9 +395,10 @@ function httpRequest(name, url, command, count, sleep, callback) {
         if (response) {
           //  debug("Response", response.statusCode, response.statusMessage);
         } else {
-          debug("Error", name, url, count, sleep, callback, error);
-          this.url = null;
-          findDevice.call(this);
+          debug("Error", name, url, count, sleep, error);
+          that.url = null;
+          // debug("Error - this", that);
+          findDevice.call(that);
         }
 
         setTimeout(function() {
@@ -404,7 +406,7 @@ function httpRequest(name, url, command, count, sleep, callback) {
         }, cmdTime - Date.now());
       });
   } else {
-    callback(new Error("Unknown host " + this.name), "", "");
+    callback(new Error("Unknown host " + this.irBlaster), "", "");
   }
 }
 
@@ -528,7 +530,7 @@ function _fanSpeed(speed) {
 }
 
 function findDevice() {
-  debug("findDevice()", this.irBlaster);
+  debug("findDevice(%s)", this.irBlaster);
   dns.lookup(this.irBlaster, function(err, result) {
     if (err || result === undefined) {
       // if failed, retry device discovery every minute
@@ -539,7 +541,7 @@ function findDevice() {
       }.bind(this), 60 * 1000);
     } else {
       this.url = "http://" + result + "/json?simple=1";
-      debug("URL", this.url);
+      debug("findDevice(%s) ==> %s", this.irBlaster, this.url);
     }
   }.bind(this));
 }
