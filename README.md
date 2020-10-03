@@ -27,16 +27,29 @@ To source the 303Mhz transmitter module, I sacrificed a Hampton Bay remote, and 
 Example config.json:
 
 ```
- {"accessory": "HBay",
- "name": "Master",
- "irBlaster": "ESP_8695EC",
- "remote_code": "0000"}
+{
+ "platform": "HBay",
+ "devices": [{
+   "lightName": "Ceiling Two",
+   "fanName": "Fan Two",
+   "irBlaster": "ESP_8695EC.local",
+   "remote_code": "0000",
+   "out": 3
+   },
+   {
+   "lightName": "Ceiling One",
+   "fanName": "Fan One",
+   "irBlaster": "ESP_8695EC.local",
+   "remote_code": "1000",
+   "out": 3
+   }]
+ }
 ```
 
 ## Required settings
 
-* accessory     - This must be "HBay"
-* name          - Name of the device
+* platform     - This must be "HBay"
+* name          - Name of the device ( or fanname / lightname )
 * irBlaster     - Name or ip address of your IRBlaster Device
 * remote_code   - This is the 4 Bit unique code for your fan controlled by the dip switches. 0 is switch UP and 1 is switch down.
 

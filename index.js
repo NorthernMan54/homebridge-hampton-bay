@@ -48,12 +48,30 @@ module.exports = function(homebridge) {
   Service = homebridge.hap.Service;
   Characteristic = homebridge.hap.Characteristic;
 
-  homebridge.registerAccessory("homebridge-hampton-bay", "HBay", HBay);
+  homebridge.registerPlatform("homebridge-hampton-bay", "HBay", hamptonBayPlatform);
 };
 
-function HBay(log, config) {
+function hamptonBayPlatform(log, config, api) {
+  this.devices = config.devices;
   this.log = log;
-  this.name = config.name;
+  this.api = api;
+}
+
+hamptonBayPlatform.prototype = {
+  accessories: function(callback) {
+    var accessories = [];
+    this.devices.forEach((config, i) => {
+      this.log("Adding", (config.name ? config.name : config.lightName));
+      var accessory = new HBay(this.log, config);
+      accessories.push(accessory);
+    });
+    callback(accessories);
+  }
+};
+
+function HBay(log, config, api) {
+  this.log = log;
+  this.name = (config.name ? config.name : config.lightName);
 
   this.fanName = config.fanName || this.name + " fan";
   this.lightName = config.lightName || this.name + " light";
