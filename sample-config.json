@@ -9,16 +9,24 @@
 
   "description": "HomeBridge HTTP Status Control",
 
-  "platforms": [
-  ],
-
-  "accessories": [
-    {
-       "accessory": "HBay",
-        "name": "Hampton",
-        "url": "http://192.168.1.171/json?simple=1",
+  "platforms": [{
+    "platform": "HBay",
+    "devices": [{
+        "lightName": "Ceiling Two",
+        "fanName": "Fan Two",
+        "irBlaster": "ESP_8695EC.local",
         "remote_code": "0000",
-        "dimmable": false,
-        "out": 1
-    }]
+        "out": 3
+      },
+      {
+        "lightName": "Ceiling One",
+        "fanName": "Fan One",
+        "irBlaster": "ESP_8695EC.local",
+        "remote_code": "1000",
+        "out": 3
+      }
+    ]
+  }],
+
+  "accessories": []
 }
