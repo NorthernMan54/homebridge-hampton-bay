@@ -37,8 +37,8 @@ var fanCommands = {
   one: ["695", "300"],
   //  winter: "10",
   //  summer: "00",
-  pulse: 8,
-  pdelay: 10,
+  pulse: 4,
+  pdelay: 13,
   rdelay: 600,
   busy: 400,
   start: 33
